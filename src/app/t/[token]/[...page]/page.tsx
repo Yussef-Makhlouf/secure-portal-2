@@ -30,6 +30,20 @@ export default async function ProtectedPage({ params }: PageProps) {
         redirect(`/access-restricted?reason=${result.reason}`);
     }
 
+    // Handle External Projects (e.g. natai on VPS)
+    if (pageName === 'natai') {
+        const externalUrl = process.env.NATAI_PROJECT_URL;
+        if (externalUrl) {
+            redirect(externalUrl);
+        } else {
+            console.error('NATAI_PROJECT_URL environment variable is not set');
+            // Fallback or error - maybe redirect to a specialized error page?
+            // For now, let's redirect to access restricted but maybe add a custom reason or just allow it to fall through to 404 if helpful?
+            // Actually, better to error out safely.
+            redirect('/access-restricted?reason=CONFIGURATION_ERROR');
+        }
+    }
+
     // Try to load the protected HTML content
     // Priority:
     // 1. {project}/{project}.html (e.g. fainew/fainew.html)

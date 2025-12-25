@@ -58,6 +58,19 @@ export async function getAvailableProjects(): Promise<ProjectInfo[]> {
         }
     }
 
+    // Manual injection for external projects (e.g., hosted on VPS due to size)
+    const externalProjects = ['natai'];
+    externalProjects.forEach(extId => {
+        if (!projects.find(p => p.id === extId)) {
+            projects.push({
+                id: extId,
+                name: formatProjectName(extId),
+                description: `External Project: ${formatProjectName(extId)}`,
+                htmlPath: 'EXTERNAL_REDIRECT' // Special marker
+            });
+        }
+    });
+
     return projects;
 }
 
